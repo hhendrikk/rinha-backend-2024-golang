@@ -1,4 +1,4 @@
-package httpserver
+package httpserver_echo
 
 import (
 	"fmt"

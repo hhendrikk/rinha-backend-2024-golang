@@ -7,6 +7,7 @@ services:
     hostname: api01
     container_name: rinha-api1
     environment:
+      - RINHA_BACKEND_ENV=production
       - RINHA_BACKEND_PORT=8080
       - RINHA_BACKEND_TIME_ZONE=-3
       - RINHA_BACKEND_DB_HOST=db
@@ -36,6 +37,7 @@ services:
     hostname: api02
     container_name: rinha-api2
     environment:
+      - RINHA_BACKEND_ENV=production
       - RINHA_BACKEND_PORT=8081
       - RINHA_BACKEND_TIME_ZONE=-3
       - RINHA_BACKEND_DB_HOST=db

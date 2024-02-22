@@ -7,6 +7,7 @@ import (
 	"rinha.backend.2024/src/internal/domains"
 	"rinha.backend.2024/src/internal/domains/entities"
 	"rinha.backend.2024/src/internal/ports"
+	"rinha.backend.2024/src/pkg/database"
 )
 
 type TransactionRepository struct {
@@ -67,6 +68,10 @@ func (t *TransactionRepository) GetLatest(ctx context.Context, clientID domains.
 }
 
 func (t *TransactionRepository) SaveTx(ctx context.Context, transaction entities.TransactionEntity) error {
+	if t.tx == nil {
+		return database.ErrTransactionNotStarted
+	}
+
 	query := `
 		INSERT INTO public.transacoes (
 			tipo,

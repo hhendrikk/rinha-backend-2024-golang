@@ -16,7 +16,7 @@ var (
 )
 
 type RegisterTransactionRequestDto struct {
-	ClientID    domains.ID `param:"id"`
+	ClientID    domains.ID `param:"id", json:"id"`
 	Value       uint64     `json:"valor"`
 	Type        string     `json:"tipo"`
 	Description string     `json:"descricao"`

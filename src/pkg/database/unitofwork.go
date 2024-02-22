@@ -143,7 +143,7 @@ func (u *UnitOfWork) DoLock(ctx context.Context, fn func(uow Worker) error, tabl
 }
 
 func (u *UnitOfWork) Do(ctx context.Context, fn func(uow Worker) error) error {
-	err := u.BeginTransaction(ctx, &sql.TxOptions{Isolation: sql.LevelReadCommitted})
+	err := u.BeginTransaction(ctx, &sql.TxOptions{Isolation: sql.LevelReadUncommitted})
 	if err != nil {
 		return err
 	}

@@ -27,8 +27,7 @@ func NewStatementUsercase(clientRepository ports.ClientRepository, transactionRe
 }
 
 func (s *StatementUsercase) Execute(ctx context.Context, request requests.GetLatestStatementBalanceRequestDto) (*responses.StatementBalanceResponseDto, error) {
-	client, err := s.clientRepository.Get(ctx, request.ClientID)
-
+	client, err := s.clientRepository.Get(ctx, request.ClientID, false)
 	if err != nil {
 		if errors.Is(err, validation.ErrNotFound) {
 			return nil, errors.Join(validation.ErrNotFound, ErrClientNotFound)
@@ -38,7 +37,6 @@ func (s *StatementUsercase) Execute(ctx context.Context, request requests.GetLat
 	}
 
 	lastTransactions, err := s.transactionRepository.GetLatest(ctx, client.ID)
-
 	if err != nil {
 		return nil, err
 	}

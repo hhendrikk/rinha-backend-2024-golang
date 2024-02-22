@@ -45,13 +45,13 @@ func (u *TransactionUsercase) Execute(ctx context.Context, request requests.Regi
 
 	var response responses.TransactionResponseDto
 
-	err = u.uow.DoLock(
+	err = u.uow.Do(
 		ctx,
 		func(uow database.Worker) error {
 			u.clientRepository.SetTx(uow.GetTx())
 			u.transactionRepository.SetTx(uow.GetTx())
 
-			client, err := u.clientRepository.Get(ctx, request.ClientID)
+			client, err := u.clientRepository.Get(ctx, request.ClientID, true)
 			if err != nil {
 				if errors.Is(err, validation.ErrNotFound) {
 					return errors.Join(validation.ErrNotFound, ErrClientNotFound)
@@ -77,8 +77,7 @@ func (u *TransactionUsercase) Execute(ctx context.Context, request requests.Regi
 			response = responses.NewTransactionResponse(balance.Limit, balance.Amount)
 
 			return nil
-		},
-		entities.ClientTableName)
+		})
 
 	if err != nil {
 		return nil, err

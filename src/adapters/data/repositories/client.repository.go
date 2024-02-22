@@ -24,7 +24,7 @@ func NewClientRepository(db *sql.DB) ports.ClientRepository {
 	}
 }
 
-func (r *ClientRepository) Get(ctx context.Context, id domains.ID) (*entities.ClientEntity, error) {
+func (r *ClientRepository) Get(ctx context.Context, id domains.ID, lock bool) (*entities.ClientEntity, error) {
 	query := `
 		SELECT
 			 id
@@ -36,6 +36,10 @@ func (r *ClientRepository) Get(ctx context.Context, id domains.ID) (*entities.Cl
 		WHERE
 			id = $1
 	`
+
+	if lock {
+		query += " FOR UPDATE"
+	}
 
 	var client entities.ClientEntity
 

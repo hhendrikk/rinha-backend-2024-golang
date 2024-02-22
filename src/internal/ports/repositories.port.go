@@ -13,7 +13,7 @@ type Repository interface {
 }
 
 type ClientRepository interface {
-	Get(ctx context.Context, id domains.ID) (*entities.ClientEntity, error)
+	Get(ctx context.Context, id domains.ID, lock bool) (*entities.ClientEntity, error)
 	UpdateAmountTx(ctx context.Context, id domains.ID, amount domains.MoneyCents) error
 	Repository
 }

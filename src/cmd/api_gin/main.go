@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 
-	"github.com/labstack/echo/v4"
+	"github.com/gin-gonic/gin"
 	"rinha.backend.2024/src/adapters/config"
-	"rinha.backend.2024/src/adapters/httpserver"
+	httpserver_gin "rinha.backend.2024/src/adapters/httpserver/gin"
 	"rinha.backend.2024/src/pkg/database"
 )
 
@@ -24,7 +24,7 @@ func main() {
 	)
 	dataBase := database.NewPostgresDatabase(connectionString, database.ConfigDatabaseFunc(func(db *sql.DB) {}))
 
-	httpserver.NewHttpServer(rinhaConfig, func(app *echo.Echo) {
-		httpserver.NewClientGroup(app, dataBase, rinhaConfig)
+	httpserver_gin.NewHttpServer(rinhaConfig, func(app *gin.Engine) {
+		httpserver_gin.NewClientGroup(app, dataBase, rinhaConfig)
 	})
 }

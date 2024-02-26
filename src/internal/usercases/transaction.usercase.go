@@ -87,16 +87,13 @@ func (u *TransactionUsercase) Execute(ctx context.Context, request requests.Regi
 }
 
 func (u *TransactionUsercase) processTransaction(client entities.ClientEntity, request requests.RegisterTransactionRequestDto) (*entities.ClientEntity, *entities.TransactionEntity, error) {
-	var transactionType domains.TransactionType
 
 	switch domains.TransactionType(request.Type) {
 	case domains.CreditTransaction:
 		client.Amount += domains.MoneyCents(request.Value)
-		transactionType = domains.CreditTransaction
 
 	case domains.DebitTransaction:
 		client.Amount -= domains.MoneyCents(request.Value)
-		transactionType = domains.DebitTransaction
 		isInsufficientBalance := client.Amount < client.Limit*-1
 
 		if isInsufficientBalance {
@@ -108,7 +105,7 @@ func (u *TransactionUsercase) processTransaction(client entities.ClientEntity, r
 		0,
 		client.ID,
 		domains.MoneyCents(request.Value),
-		transactionType,
+		domains.TransactionType(request.Type),
 		request.Description,
 		u.transactionTime(),
 	)

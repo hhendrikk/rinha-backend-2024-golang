@@ -22,7 +22,10 @@ func main() {
 			"application_name": rinhaConfig.Database.Application,
 		},
 	)
-	dataBase := database.NewPostgresDatabase(connectionString, database.ConfigDatabaseFunc(func(db *sql.DB) {}))
+	dataBase := database.NewPostgresDatabase(connectionString, database.ConfigDatabaseFunc(func(db *sql.DB) {
+		db.SetMaxOpenConns(10)
+		db.SetMaxIdleConns(10)
+	}))
 
 	httpserver_gin.NewHttpServer(rinhaConfig, func(app *gin.Engine) {
 		httpserver_gin.NewClientGroup(app, dataBase, rinhaConfig)

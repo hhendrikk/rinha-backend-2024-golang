@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"strings"
 )
 
 var (
@@ -18,12 +16,9 @@ var (
 
 type Worker interface {
 	BeginTransaction(ctx context.Context, opts *sql.TxOptions) error
-	BeginLockTransaction(ctx context.Context, tables ...string) error
 	CommitOrRollback() error
 	Rollback() error
-	Lock(ctx context.Context, tables ...string) error
 	GetTx() *sql.Tx
-	DoLock(ctx context.Context, fn func(uow Worker) error, tables ...string) error
 	Do(ctx context.Context, fn func(uow Worker) error) error
 }
 
@@ -48,35 +43,6 @@ func (u *UnitOfWork) BeginTransaction(ctx context.Context, opts *sql.TxOptions) 
 		return err
 	}
 	u.tx = tx
-
-	return nil
-}
-
-func (u *UnitOfWork) BeginLockTransaction(ctx context.Context, tables ...string) error {
-	err := u.BeginTransaction(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	err = u.Lock(ctx, tables...)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (u *UnitOfWork) Lock(ctx context.Context, tables ...string) error {
-	if u.tx == nil {
-		return ErrTransactionNotStarted
-	}
-
-	q := fmt.Sprintf("LOCK TABLE %s", strings.Join(tables, ", "))
-
-	_, err := u.tx.ExecContext(ctx, q)
-	if err != nil {
-		return errors.Join(err, ErrLockTablesFailed)
-	}
 
 	return nil
 }
@@ -119,27 +85,6 @@ func (u *UnitOfWork) Rollback() error {
 
 func (u *UnitOfWork) GetTx() *sql.Tx {
 	return u.tx
-}
-
-func (u *UnitOfWork) DoLock(ctx context.Context, fn func(uow Worker) error, tables ...string) error {
-	err := u.BeginLockTransaction(ctx, tables...)
-	if err != nil {
-		return err
-	}
-
-	err = fn(u)
-
-	if err != nil {
-		errRollback := u.Rollback()
-
-		if errRollback != nil {
-			return errors.Join(err, ErrTransactionNotRolledBack)
-		}
-
-		return err
-	}
-
-	return u.CommitOrRollback()
 }
 
 func (u *UnitOfWork) Do(ctx context.Context, fn func(uow Worker) error) error {

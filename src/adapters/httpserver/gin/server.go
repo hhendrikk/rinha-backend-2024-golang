@@ -24,7 +24,7 @@ func NewHttpServer(config *config.RinhaBackendConfig, fn GroupFunc) {
 	}
 
 	app.Use(gin.Recovery())
-	app.Use(gzip.Gzip(gzip.DefaultCompression))
+	app.Use(gzip.Gzip(gzip.BestCompression))
 
 	fn(app)
 

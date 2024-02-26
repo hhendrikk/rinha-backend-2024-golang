@@ -1,16 +1,12 @@
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-
-CREATE UNLOGGED TABLE clientes (
-    id SERIAL PRIMARY KEY NOT NULL,
+CREATE TABLE clientes (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     nome VARCHAR(50) NOT NULL,
     limite INTEGER NOT NULL,
     saldo INTEGER NOT NULL
 );
 
-CREATE UNLOGGED TABLE transacoes (
-    id SERIAL PRIMARY KEY NOT NULL,
+CREATE TABLE transacoes (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     tipo CHAR(1) NOT NULL,
     descricao VARCHAR(10) NOT NULL,
     valor INTEGER NOT NULL,

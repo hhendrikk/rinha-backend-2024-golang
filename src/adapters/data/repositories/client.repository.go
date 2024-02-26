@@ -38,7 +38,7 @@ func (r *ClientRepository) Get(ctx context.Context, id domains.ID, lock bool) (*
 	`
 
 	if lock {
-		query += " FOR UPDATE"
+		query += " FOR UPDATE;"
 	}
 
 	var client entities.ClientEntity
